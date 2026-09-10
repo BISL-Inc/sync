@@ -48,31 +48,6 @@ cd extension && npm test          # 121 tests, no dependencies
 cd server && PYTHONPATH=. pytest  # 25 tests
 ```
 
-## Configuration
-
-All server settings are environment variables; every one is optional and has a
-safe default.
-
-| Variable | Default | Effect |
-|----------|---------|--------|
-| `DEBUG` | `false` | Verbose request logging |
-| `ALLOWED_EXTENSION_IDS` | *(unset)* | Comma-separated extension IDs allowed to open WebSockets. Unset accepts any origin and logs a warning. |
-| `CLOUDFLARE_TURN_KEY_ID` | *(unset)* | Cloudflare Realtime TURN key ID |
-| `CLOUDFLARE_TURN_API_TOKEN` | *(unset)* | Cloudflare Realtime TURN API token |
-| `TURN_CREDENTIAL_TTL_S` | `3600` | Lifetime of a minted TURN credential |
-
-### TURN
-
-Without TURN, WebRTC works between peers that can form a direct path — the same
-LAN, or friendly NATs — and silently fails behind symmetric NAT or
-carrier-grade NAT, which covers most mobile networks. Those rooms fall back to
-the WebSocket relay and still work; they just lose the P2P latency benefit.
-
-To enable it, create a TURN key in the Cloudflare dashboard (Realtime → TURN)
-and set the two variables above. `GET /turn-credentials` then mints short-lived
-credentials per client, so the long-term key never ships inside the extension.
-Cloudflare's free allowance is 1000 GB/month.
-
 ## Measuring latency
 
 `server/tools/latency_probe.py` connects two synthetic peers to a live room and
